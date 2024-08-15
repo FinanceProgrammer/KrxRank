@@ -1,0 +1,659 @@
+import requests
+import json
+import pandas as pd
+
+def price_fluctuation_high(start_date, end_date, market="ALL"):
+    df_list = []
+    for mk in mktId(market):
+        data = [('bld', 'dbms/MDC/EASY/ranking/MDCEASY01501'),
+                ('locale', 'ko_KR'),
+                ('mktId', str(mk)),
+                ('itmTpCd2', '1'),
+                ('strtDd', str(start_date)),
+                ('endDd', str(end_date)),
+                ('stkprcTpCd', 'Y')]
+        df_list.append(json.loads(requests.post(BASE_URL, headers=headers, data=data).text)['OutBlock_1'])
+    col = ['종목코드', '종목명', '시장구분', '시가', '종가', '등락률', '거래량', '거래대금']
+    df = make_dl(list_cb(df_list), col)
+    df.sort(key=lambda x: float(x[5]), reverse=True)
+    df = pd.DataFrame(df[:50], columns=col, index=[i for i in range(1, 51, 1)])
+    return df
+
+def price_fluctuation_low(start_date, end_date, market="ALL"):
+    df_list = []
+    for mk in mktId(market):
+        data = [('bld', 'dbms/MDC/EASY/ranking/MDCEASY01501'),
+                ('locale', 'ko_KR'),
+                ('mktId', str(mk)),
+                ('itmTpCd2', '2'),
+                ('strtDd', str(start_date)),
+                ('endDd', str(end_date)),
+                ('stkprcTpCd', 'Y')]
+        df_list.append(json.loads(requests.post(BASE_URL, headers=headers, data=data).text)['OutBlock_1'])
+    col = ['종목코드', '종목명', '시장구분', '시가', '종가', '등락률', '거래량', '거래대금']
+    df = make_dl(list_cb(df_list), col)
+    df.sort(key=lambda x: float(x[5]), reverse=False)
+    df = pd.DataFrame(df[:50], columns=col, index=[i for i in range(1, 51, 1)])
+    return df
+
+def trading_value_high(start_date, end_date, market="ALL"):
+    df_list = []
+    for mk in mktId(market):
+        data = [
+            ('bld', 'dbms/MDC/EASY/ranking/MDCEASY01601'),
+            ('locale', 'ko_KR'),
+            ('mktId', str(mk)),
+            ('itmTpCd3', '2'),
+            ('itmTpCd2', '1'),
+            ('strtDd', str(start_date)),
+            ('endDd', str(end_date)),
+            ('stkprcTpCd', 'Y')]
+        df_list.append(json.loads(requests.post(BASE_URL, headers=headers, data=data).text)['OutBlock_1'])
+    col = ['종목코드', '종목명', '시장구분', '시가', '종가', '등락률', '거래량', '거래대금']
+    df = make_dl(list_cb(df_list), col)
+    df.sort(key=lambda x: float(x[7]), reverse=True)
+    df = pd.DataFrame(df[:50], columns=col, index=[i for i in range(1, 51, 1)])
+    return df
+
+def trading_value_low(start_date, end_date, market="ALL"):
+    df_list = []
+    for mk in mktId(market):
+        data = [('bld', 'dbms/MDC/EASY/ranking/MDCEASY01601'),
+                ('locale', 'ko_KR'),
+                ('mktId', str(mk)),
+                ('itmTpCd3', '2'),
+                ('itmTpCd2', '2'),
+                ('strtDd', str(start_date)),
+                ('endDd', str(end_date)),
+                ('stkprcTpCd', 'Y')]
+        df_list.append(json.loads(requests.post(BASE_URL, headers=headers, data=data).text)['OutBlock_1'])
+    col = ['종목코드', '종목명', '시장구분', '시가', '종가', '등락률', '거래량', '거래대금']
+    df = make_dl(list_cb(df_list), col)
+    df.sort(key=lambda x: float(x[7]), reverse=False)
+    df = pd.DataFrame(df[:50], columns=col, index=[i for i in range(1, 51, 1)])
+    return df
+
+def trading_volume_high(start_date, end_date, market="ALL"):
+    df_list = []
+    for mk in mktId(market):
+        data = [('bld', 'dbms/MDC/EASY/ranking/MDCEASY01601'),
+                ('locale', 'ko_KR'),
+                ('mktId', str(mk)),
+                ('itmTpCd3', '1'), # 1이 거래량 2가 거래대금
+                ('itmTpCd2', '1'),
+                ('strtDd', str(start_date)),
+                ('endDd', str(end_date)),
+                ('stkprcTpCd', 'Y')]
+        df_list.append(json.loads(requests.post(BASE_URL, headers=headers, data=data).text)['OutBlock_1'])
+    col = ['종목코드', '종목명', '시장구분', '시가', '종가', '등락률', '거래량', '거래대금']
+    df = make_dl(list_cb(df_list), col)
+    df.sort(key=lambda x: float(x[6]), reverse=True)
+    df = pd.DataFrame(df[:50], columns=col, index=[i for i in range(1, 51, 1)])
+    return df
+
+def trading_volume_low(start_date, end_date, market="ALL"):
+    df_list = []
+    for mk in mktId(market):
+        data = [('bld', 'dbms/MDC/EASY/ranking/MDCEASY01601'),
+                ('locale', 'ko_KR'),
+                ('mktId', str(mk)),
+                ('itmTpCd3', '1'), # 1이 거래량 2가 거래대금
+                ('itmTpCd2', '2'),
+                ('strtDd', str(start_date)),
+                ('endDd', str(end_date)),
+                ('stkprcTpCd', 'Y')]
+        df_list.append(json.loads(requests.post(BASE_URL, headers=headers, data=data).text)['OutBlock_1'])
+    col = ['종목코드', '종목명', '시장구분', '시가', '종가', '등락률', '거래량', '거래대금']
+    df = make_dl(list_cb(df_list), col)
+    df.sort(key=lambda x: float(x[6]), reverse=False)
+    df = pd.DataFrame(df[:50], columns=col, index=[i for i in range(1, 51, 1)])
+    return df
+
+def market_cap_high(date, market="ALL"):
+    df_list = []
+    for mk in mktId(market):
+        data = [('bld', 'dbms/MDC/EASY/ranking/MDCEASY01701'),
+                ('locale', 'ko_KR'),
+                ('mktId', str(mk)),
+                ('itmTpCd', '1'),
+                ('trdDd', str(date)),
+                ('stkprcTpCd', 'Y')]
+        df_list.append(json.loads(requests.post(BASE_URL, headers=headers, data=data).text)['OutBlock_1'])
+    col = ['종목코드', '종목명', '시장구분', '시가총액', '시가총액비중', '상장주식수']
+    df = make_dl(list_cb(df_list), col)
+    df.sort(key=lambda x: float(x[3]), reverse=True)
+    df = pd.DataFrame(df[:50], columns=col, index=[i for i in range(1, 51, 1)])
+    return df
+
+def market_cap_low(date, market="ALL"):
+    df_list = []
+    for mk in mktId(market):
+        data = [('bld', 'dbms/MDC/EASY/ranking/MDCEASY01701'),
+                ('locale', 'ko_KR'),
+                ('mktId', str(mk)),
+                ('itmTpCd', '2'),
+                ('trdDd', str(date)),
+                ('stkprcTpCd', 'Y')]
+        df_list.append(json.loads(requests.post(BASE_URL, headers=headers, data=data).text)['OutBlock_1'])
+    col = ['종목코드', '종목명', '시장구분', '시가총액', '시가총액비중', '상장주식수']
+    df = make_dl(list_cb(df_list), col)
+    df.sort(key=lambda x: float(x[3]), reverse=False)
+    df = pd.DataFrame(df[:50], columns=col, index=[i for i in range(1, 51, 1)])
+    return df
+
+def upper_limit(date, market="ALL"):
+    df_list = []
+    for mk in mktId(market):
+        data = [('bld', 'dbms/MDC/EASY/ranking/MDCEASY01801'),
+                ('locale', 'ko_KR'),
+                ('mktId', str(mk)),
+                ('flucTpCd', '4'),
+                ('trdDd', str(date))]
+        df_list.append(json.loads(requests.post(BASE_URL, headers=headers, data=data).text)['OutBlock_1'])
+    col = ['종목코드', '종목명', '시장구분', '시', '저', '종', '등락률', '거래량', '거래대금']
+    df = make_dl(list_cb(df_list), col)
+    df.sort(key=lambda x: float(x[6]), reverse=True)
+    df = pd.DataFrame(df, columns=col, index=[i for i in range(1, len(df)+1, 1)])
+    return df
+
+def lower_limit(date, market="ALL"):
+    df_list = []
+    for mk in mktId(market):
+        data = [('bld', 'dbms/MDC/EASY/ranking/MDCEASY01801'),
+                ('locale', 'ko_KR'),
+                ('mktId', str(mk)),
+                ('flucTpCd', '5'),
+                ('trdDd', str(date))]
+        df_list.append(json.loads(requests.post(BASE_URL, headers=headers, data=data).text)['OutBlock_1'])
+    col = ['종목코드', '종목명', '시장구분', '시', '고', '종', '등락률', '거래량', '거래대금']
+    df = make_dl(list_cb(df_list), col)
+    df.sort(key=lambda x: float(x[6]), reverse=False)
+    df = pd.DataFrame(df, columns=col, index=[i for i in range(1, len(df)+1, 1)])
+    return df
+
+def convert_price_high(date, market="ALL"):
+    df_list = []
+    for mk in mktId(market):
+        data = [('bld', 'dbms/MDC/EASY/ranking/MDCEASY01901'),
+                ('locale', 'ko_KR'),
+                ('mktId', str(mk)),
+                ('trdDd', str(date))
+                ]
+        df_list.append(json.loads(requests.post(BASE_URL, headers=headers, data=data).text)['OutBlock_1'])
+    col = ['종목코드', '종목명', '시장구분', '종', '환산주가', '액면가', '시가총액']
+    df = make_dl(list_cb(df_list), col)
+    df.sort(key=lambda x: float(x[4]), reverse=True)
+    df = pd.DataFrame(df[:50], columns=col, index=[i for i in range(1, 51, 1)])
+    return df
+
+def turnover_high(date, market="ALL"):
+    df_list = []
+    for mk in mktId(market):
+        data = [('bld', 'dbms/MDC/EASY/ranking/MDCEASY02001'),
+                ('locale', 'ko_KR'),
+                ('mktId', str(mk)),
+                ('trdDd', str(date))]
+        df_list.append(json.loads(requests.post(BASE_URL, headers=headers, data=data).text)['OutBlock_1'])
+    col = ['종목코드', '종목명', '시장구분', '종', '등락률', '회전율', '상장주식수', '거래량']
+    df = make_dl(list_cb(df_list), col)
+    df.sort(key=lambda x: float(x[5]), reverse=True)
+    df = pd.DataFrame(df[:50], columns=col, index=[i for i in range(1, 51, 1)])
+    return df
+
+def foreigner_share_high(date, market="ALL"):
+    df_list = []
+    for mk in mktId(market):
+        data = [('bld', 'dbms/MDC/EASY/ranking/MDCEASY02101'),
+                ('locale', 'ko_KR'),
+                ('itmTpCd', '1'),
+                ('mktId', str(mk)),
+                ('trdDd', str(date))]
+        df_list.append(json.loads(requests.post(BASE_URL, headers=headers, data=data).text)['OutBlock_1'])
+    col = ['종목코드', '종목명', '상장주식수', '외국인보유수량', '외국인지분율', '외국인한도수량', '외국인한도소진율']
+    df = make_dl(list_cb(df_list), col)
+    df.sort(key=lambda x: float(x[5]), reverse=True)
+    df = pd.DataFrame(df[:50], columns=col, index=[i for i in range(1, 51, 1)])
+    return df
+
+def foreigner_limit_high(date, market="ALL"):
+    df_list = []
+    for mk in mktId(market):
+        data = [('bld', 'dbms/MDC/EASY/ranking/MDCEASY02101'),
+                ('locale', 'ko_KR'),
+                ('itmTpCd', '2'),
+                ('mktId', str(mk)),
+                ('trdDd', str(date))]
+        df_list.append(json.loads(requests.post(BASE_URL, headers=headers, data=data).text)['OutBlock_1'])
+    col = ['종목코드', '종목명', '상장주식수', '외국인보유수량', '외국인지분율', '외국인한도수량', '외국인한도소진율']
+    df = make_dl(list_cb(df_list), col)
+    df.sort(key=lambda x: float(x[6]), reverse=True)
+    df = pd.DataFrame(df[:50], columns=col, index=[i for i in range(1, 51, 1)])
+    return df
+
+def etf_price_fluctuation_high(start_date, end_date):
+    df_list = []
+    data = [('bld', 'dbms/MDC/EASY/ranking/MDCEASY02201'),
+            ('locale', 'ko_KR'),
+            ('secugrpId', 'EF'),
+            ('itmTpCd', '1'),
+            ('strtDd', str(start_date)),
+            ('endDd', str(end_date))]
+    df_list.append(json.loads(requests.post(BASE_URL, headers=headers, data=data).text)['OutBlock_1'])
+    col = ['종목코드', '종목명', '시가', '종가', '등락률', '거래량', '거래대금']
+    df = make_dl(list_cb(df_list), col)
+    df.sort(key=lambda x: float(x[4]), reverse=True)
+    df = pd.DataFrame(df[:50], columns=col, index=[i for i in range(1, 51, 1)])
+    return df
+
+def etf_price_fluctuation_low(start_date, end_date):
+    df_list = []
+    data = [('bld', 'dbms/MDC/EASY/ranking/MDCEASY02201'),
+            ('locale', 'ko_KR'),
+            ('secugrpId', 'EF'),
+            ('itmTpCd', '2'),
+            ('strtDd', str(start_date)),
+            ('endDd', str(end_date))]
+    df_list.append(json.loads(requests.post(BASE_URL, headers=headers, data=data).text)['OutBlock_1'])
+    col = ['종목코드', '종목명', '시가', '종가', '등락률', '거래량', '거래대금']
+    df = make_dl(list_cb(df_list), col)
+    df.sort(key=lambda x: float(x[4]), reverse=False)
+    df = pd.DataFrame(df[:50], columns=col, index=[i for i in range(1, 51, 1)])
+    return df
+
+def etn_price_fluctuation_high(start_date, end_date):
+    df_list = []
+    data = [('bld', 'dbms/MDC/EASY/ranking/MDCEASY02201'),
+            ('locale', 'ko_KR'),
+            ('secugrpId', 'EN'),
+            ('itmTpCd', '1'),
+            ('strtDd', str(start_date)),
+            ('endDd', str(end_date))]
+    df_list.append(json.loads(requests.post(BASE_URL, headers=headers, data=data).text)['OutBlock_1'])
+    col = ['종목코드', '종목명', '시가', '종가', '등락률', '거래량', '거래대금']
+    df = make_dl(list_cb(df_list), col)
+    df.sort(key=lambda x: float(x[4]), reverse=True)
+    df = pd.DataFrame(df[:50], columns=col, index=[i for i in range(1, 51, 1)])
+    return df
+
+def etn_price_fluctuation_low(start_date, end_date):
+    df_list = []
+    data = [('bld', 'dbms/MDC/EASY/ranking/MDCEASY02201'),
+            ('locale', 'ko_KR'),
+            ('secugrpId', 'EN'),
+            ('itmTpCd', '2'),
+            ('strtDd', str(start_date)),
+            ('endDd', str(end_date))]
+    df_list.append(json.loads(requests.post(BASE_URL, headers=headers, data=data).text)['OutBlock_1'])
+    col = ['종목코드', '종목명', '시가', '종가', '등락률', '거래량', '거래대금']
+    df = make_dl(list_cb(df_list), col)
+    df.sort(key=lambda x: float(x[4]), reverse=False)
+    df = pd.DataFrame(df[:50], columns=col, index=[i for i in range(1, 51, 1)])
+    return df
+
+def etf_trading_volume_high(start_date, end_date):
+    df_list = []
+    data = [('bld', 'dbms/MDC/EASY/ranking/MDCEASY02301'),
+            ('locale', 'ko_KR'),
+            ('secugrpId', 'EF'),
+            ('itmTpCd1', '1'),
+            ('itmTpCd2', '1'),
+            ('strtDd', str(start_date)),
+            ('endDd', str(end_date))]
+    df_list.append(json.loads(requests.post(BASE_URL, headers=headers, data=data).text)['OutBlock_1'])
+    col = ['종목코드', '종목명', '시가', '종가', '등락률', '거래량', '거래대금']
+    df = make_dl(list_cb(df_list), col)
+    df.sort(key=lambda x: float(x[5]), reverse=True)
+    df = pd.DataFrame(df[:50], columns=col, index=[i for i in range(1, 51, 1)])
+    return df
+
+def etf_trading_volume_low(start_date, end_date):
+    df_list = []
+    data = [('bld', 'dbms/MDC/EASY/ranking/MDCEASY02301'),
+            ('locale', 'ko_KR'),
+            ('secugrpId', 'EF'),
+            ('itmTpCd1', '1'),
+            ('itmTpCd2', '2'),
+            ('strtDd', str(start_date)),
+            ('endDd', str(end_date))]
+    df_list.append(json.loads(requests.post(BASE_URL, headers=headers, data=data).text)['OutBlock_1'])
+    col = ['종목코드', '종목명', '시가', '종가', '등락률', '거래량', '거래대금']
+    df = make_dl(list_cb(df_list), col)
+    df.sort(key=lambda x: float(x[5]), reverse=False)
+    df = pd.DataFrame(df[:50], columns=col, index=[i for i in range(1, 51, 1)])
+    return df
+
+def etn_trading_volume_high(start_date, end_date):
+    df_list = []
+    data = [('bld', 'dbms/MDC/EASY/ranking/MDCEASY02301'),
+            ('locale', 'ko_KR'),
+            ('secugrpId', 'EN'),
+            ('itmTpCd1', '1'),
+            ('itmTpCd2', '1'),
+            ('strtDd', str(start_date)),
+            ('endDd', str(end_date))]
+    df_list.append(json.loads(requests.post(BASE_URL, headers=headers, data=data).text)['OutBlock_1'])
+    col = ['종목코드', '종목명', '시가', '종가', '등락률', '거래량', '거래대금']
+    df = make_dl(list_cb(df_list), col)
+    df.sort(key=lambda x: float(x[5]), reverse=True)
+    df = pd.DataFrame(df[:50], columns=col, index=[i for i in range(1, 51, 1)])
+    return df
+
+def etn_trading_volume_low(start_date, end_date):
+    df_list = []
+    data = [('bld', 'dbms/MDC/EASY/ranking/MDCEASY02301'),
+            ('locale', 'ko_KR'),
+            ('secugrpId', 'EN'),
+            ('itmTpCd1', '1'),
+            ('itmTpCd2', '2'),
+            ('strtDd', str(start_date)),
+            ('endDd', str(end_date))]
+    df_list.append(json.loads(requests.post(BASE_URL, headers=headers, data=data).text)['OutBlock_1'])
+    col = ['종목코드', '종목명', '시가', '종가', '등락률', '거래량', '거래대금']
+    df = make_dl(list_cb(df_list), col)
+    df.sort(key=lambda x: float(x[5]), reverse=False)
+    df = pd.DataFrame(df[:50], columns=col, index=[i for i in range(1, 51, 1)])
+    return df
+
+def etf_trading_value_high(start_date, end_date):
+    df_list = []
+    data = [('bld', 'dbms/MDC/EASY/ranking/MDCEASY02301'),
+            ('locale', 'ko_KR'),
+            ('secugrpId', 'EF'),
+            ('itmTpCd1', '2'),
+            ('itmTpCd2', '1'),
+            ('strtDd', str(start_date)),
+            ('endDd', str(end_date))]
+    df_list.append(json.loads(requests.post(BASE_URL, headers=headers, data=data).text)['OutBlock_1'])
+    col = ['종목코드', '종목명', '시가', '종가', '등락률', '거래량', '거래대금']
+    df = make_dl(list_cb(df_list), col)
+    df.sort(key=lambda x: float(x[6]), reverse=True)
+    df = pd.DataFrame(df[:50], columns=col, index=[i for i in range(1, 51, 1)])
+    return df
+
+def etf_trading_value_low(start_date, end_date):
+    df_list = []
+    data = [('bld', 'dbms/MDC/EASY/ranking/MDCEASY02301'),
+            ('locale', 'ko_KR'),
+            ('secugrpId', 'EF'),
+            ('itmTpCd1', '2'),
+            ('itmTpCd2', '2'),
+            ('strtDd', str(start_date)),
+            ('endDd', str(end_date))]
+    df_list.append(json.loads(requests.post(BASE_URL, headers=headers, data=data).text)['OutBlock_1'])
+    col = ['종목코드', '종목명', '시가', '종가', '등락률', '거래량', '거래대금']
+    df = make_dl(list_cb(df_list), col)
+    df.sort(key=lambda x: float(x[6]), reverse=False)
+    df = pd.DataFrame(df[:50], columns=col, index=[i for i in range(1, 51, 1)])
+    return df
+
+def etn_trading_value_high(start_date, end_date):
+    df_list = []
+    data = [('bld', 'dbms/MDC/EASY/ranking/MDCEASY02301'),
+            ('locale', 'ko_KR'),
+            ('secugrpId', 'EN'),
+            ('itmTpCd1', '2'),
+            ('itmTpCd2', '1'),
+            ('strtDd', str(start_date)),
+            ('endDd', str(end_date))]
+    df_list.append(json.loads(requests.post(BASE_URL, headers=headers, data=data).text)['OutBlock_1'])
+    col = ['종목코드', '종목명', '시가', '종가', '등락률', '거래량', '거래대금']
+    df = make_dl(list_cb(df_list), col)
+    df.sort(key=lambda x: float(x[6]), reverse=True)
+    df = pd.DataFrame(df[:50], columns=col, index=[i for i in range(1, 51, 1)])
+    return df
+
+def etn_trading_value_low(start_date, end_date):
+    df_list = []
+    data = [('bld', 'dbms/MDC/EASY/ranking/MDCEASY02301'),
+            ('locale', 'ko_KR'),
+            ('secugrpId', 'EN'),
+            ('itmTpCd1', '2'),
+            ('itmTpCd2', '2'),
+            ('strtDd', str(start_date)),
+            ('endDd', str(end_date))]
+    df_list.append(json.loads(requests.post(BASE_URL, headers=headers, data=data).text)['OutBlock_1'])
+    col = ['종목코드', '종목명', '시가', '종가', '등락률', '거래량', '거래대금']
+    df = make_dl(list_cb(df_list), col)
+    df.sort(key=lambda x: float(x[6]), reverse=False)
+    df = pd.DataFrame(df[:50], columns=col, index=[i for i in range(1, 51, 1)])
+    return df
+
+def etf_net_asset_value_high(date):
+    df_list = []
+    data = [('bld', 'dbms/MDC/EASY/ranking/MDCEASY02401'),
+            ('locale', 'ko_KR'),
+            ('secugrpId', 'EF'),
+            ('itmTpCd', '1'),
+            ('trdDd', str(date))]
+    df_list.append(json.loads(requests.post(BASE_URL, headers=headers, data=data).text)['OutBlock_1'])
+    col = ['종목코드', '종목명', '종', '등락률', '추정NAV', '거래량', '거래대금']
+    df = make_dl(list_cb(df_list), col)
+    df.sort(key=lambda x: float(x[4]), reverse=True)
+    df = pd.DataFrame(df[:50], columns=col, index=[i for i in range(1, 51, 1)])
+    return df
+
+def etf_net_asset_value_low(date):
+    df_list = []
+    data = [('bld', 'dbms/MDC/EASY/ranking/MDCEASY02401'),
+            ('locale', 'ko_KR'),
+            ('secugrpId', 'EF'),
+            ('itmTpCd', '2'),
+            ('trdDd', str(date))]
+    df_list.append(json.loads(requests.post(BASE_URL, headers=headers, data=data).text)['OutBlock_1'])
+    col = ['종목코드', '종목명', '종', '등락률', '추정NAV', '거래량', '거래대금']
+    df = make_dl(list_cb(df_list), col)
+    df.sort(key=lambda x: float(x[4]), reverse=False)
+    df = pd.DataFrame(df[:50], columns=col, index=[i for i in range(1, 51, 1)])
+    return df
+
+def etn_net_asset_value_high(date):
+    df_list = []
+    data = [('bld', 'dbms/MDC/EASY/ranking/MDCEASY02401'),
+            ('locale', 'ko_KR'),
+            ('secugrpId', 'EN'),
+            ('itmTpCd', '1'),
+            ('trdDd', str(date))]
+    df_list.append(json.loads(requests.post(BASE_URL, headers=headers, data=data).text)['OutBlock_1'])
+    col = ['종목코드', '종목명', '종', '등락률', '추정NAV', '거래량', '거래대금']
+    df = make_dl(list_cb(df_list), col)
+    df.sort(key=lambda x: float(x[4]), reverse=True)
+    df = pd.DataFrame(df[:50], columns=col, index=[i for i in range(1, 51, 1)])
+    return df
+
+def etn_net_asset_value_low(date):
+    df_list = []
+    data = [('bld', 'dbms/MDC/EASY/ranking/MDCEASY02401'),
+            ('locale', 'ko_KR'),
+            ('secugrpId', 'EN'),
+            ('itmTpCd', '2'),
+            ('trdDd', str(date))]
+    df_list.append(json.loads(requests.post(BASE_URL, headers=headers, data=data).text)['OutBlock_1'])
+    col = ['종목코드', '종목명', '종', '등락률', '추정NAV', '거래량', '거래대금']
+    df = make_dl(list_cb(df_list), col)
+    df.sort(key=lambda x: float(x[4]), reverse=False)
+    df = pd.DataFrame(df[:50], columns=col, index=[i for i in range(1, 51, 1)])
+    return df
+
+# 통계 - 기본통계 - 주식 - 종목시세 - 전종목시세
+# input: 날짜 / output: [종목코드, 종목명, 시장구분, 시가총액]을 데이터프레임 형식으로 반환
+def market_cap(date):
+    data = [
+        ('bld', 'dbms/MDC/STAT/standard/MDCSTAT01501'),
+        ('locale', 'ko_KR'),
+        ('mktId', 'ALL'),
+        ('trdDd', int(date)),
+        ('share', '1'),
+        ('csvxls_isNo', 'false')
+    ]
+    res = requests.post(BASE_URL, headers=headers, data=data)
+    t = res.text
+    want_list = json.loads(t)['OutBlock_1']
+    Data = []
+    for j in want_list:
+        if str(j['MKT_NM']) == 'KONEX':
+            pass
+        else:
+            code = j['ISU_SRT_CD']
+            name = j['ISU_ABBRV']
+            mk = j['MKT_NM']
+            mk_cap = del_comma(j['MKTCAP'])
+            Data.append([code, name, mk, mk_cap])
+    df = pd.DataFrame(Data, columns=["종목코드", "종목명", "시장구분", "시가총액"])
+    return df
+
+def kospi_index(date):
+    data = [
+        ('bld', 'dbms/MDC/STAT/standard/MDCSTAT00301'),
+        ('locale', 'ko_KR'),
+        ('tboxindIdx_finder_equidx0_5', '코스피'),
+        ('indIdx', '1'),
+        ('indIdx2', '001'),
+        ('codeNmindIdx_finder_equidx0_5', '코스피'),
+        ('strtDd', str(date - 10000)),
+        ('endDd', str(date)),
+        ('share', '2'),
+        ('money', '3'),
+        ('csvxls_isNo', 'false')
+    ]
+    res = requests.post(BASE_URL, headers=headers, data=data)
+    t = res.text
+    want_list = json.loads(t)['output']
+    Data = []
+    for j in want_list:
+        Data.append([j['TRD_DD'], j["UPDN_RATE"], j["OPNPRC_IDX"], j["HGPRC_IDX"], j["LWPRC_IDX"],
+                     j["CLSPRC_IDX"], j["ACC_TRDVOL"], j["ACC_TRDVAL"]])
+    df = pd.DataFrame(Data, columns=['날짜', '등락률', '시가', '고가', '저가', '종가', '거래량', '거래대금'])
+    return df
+
+def kosdaq_index(date):
+    data = [
+        ('bld', 'dbms/MDC/STAT/standard/MDCSTAT00301'),
+        ('locale', 'ko_KR'),
+        ('tboxindIdx_finder_equidx0_5', '코스닥'),
+        ('indIdx', '2'),
+        ('indIdx2', '001'),
+        ('codeNmindIdx_finder_equidx0_5', '코스닥'),
+        ('strtDd', str(date - 10000)),
+        ('endDd', str(date)),
+        ('share', '2'),
+        ('money', '3'),
+        ('csvxls_isNo', 'false')
+    ]
+    res = requests.post(BASE_URL, headers=headers, data=data)
+    t = res.text
+    want_list = json.loads(t)['output']
+    Data = []
+    for j in want_list:
+        Data.append([j['TRD_DD'], j["UPDN_RATE"], j["OPNPRC_IDX"], j["HGPRC_IDX"], j["LWPRC_IDX"],
+                     j["CLSPRC_IDX"], j["ACC_TRDVOL"], j["ACC_TRDVAL"]])
+    df = pd.DataFrame(Data, columns=['날짜', '등락률', '시가', '고가', '저가', '종가', '거래량', '거래대금'])
+    return df
+
+def design():
+    data = [
+        ('bld', 'dbms/MDC/STAT/standard/MDCSTAT02001'),
+        ('locale', 'ko_KR'),
+        ('mktId', 'ALL'),
+        ('csvxls_isNo', 'false'),
+        ]
+    res = requests.post(BASE_URL, headers=headers, data=data)
+    t = res.text
+    want_list = json.loads(t)['OutBlock_1']
+    Data = []
+    for j in want_list:
+        if str(j["MKT_ID"]) == 'KNX':
+            pass
+        else:
+            code = j['ISU_SRT_CD']
+            name = j['ISU_ABBRV']
+            a = j["HALT_YN"]                      # 거래정지
+            b = j["ARRANTRD_YN"]                  # 정리매매
+            c = j["ADMISU_YN"]                    # 관리
+            d = j["INVSTCAUTN_REMND_ISU_YN"]      # 투자주의환기
+            e = j["NFAITHDISCLS_YN"]              # 불성실공시
+            f = j["SRTTRM_OVERHEAT_ISU_TP_YN"]    # 단기과열
+            g = j["INVSTCAUTN_YN"]                # 투자주의
+            h = j["NVST_WARN_YN"]                 # 투자경고
+            i = j["NVST_RISK_YN"]                 # 투자위험
+            Data.append([code, name, a, b, c, d, e, f, g, h, i])
+    df = pd.DataFrame(Data, columns=["종목코드", "종목명", '거래정지', '정리매매', '관리', '투자주의환기',
+                                     '불성실공시', '단기과열', '투자주의', '투자경고', '투자위험'])
+    return df
+
+# a 대비 b의 등락률을 소수점 3자리 float type으로 반환
+# 주가를 대상으로 하기에 0이 입력되면 작동 X
+def sp(a, b):
+    if a != 0 and b != 0:
+        return round((b - a) / a * 100, 3)
+
+# 가격의 콤마(,)를 제거 하고 정수형으로 반환해주는 함수
+# 변수의 type도 str에서 int로 변환
+# ex) 20,000 -> 20000
+def del_comma(n):
+    if ',' in list(n):
+        n = ''.join(n.split(','))
+        if '.' in n:
+            return float(n)
+        else:
+            return int(n)
+    else:
+        return n
+
+# market 입력 값을 스크래핑 활용 인수로 변경
+def mktId(market) :
+    if market == 'KOSPI':
+        market = ['STK']
+    elif market == 'KOSDAQ':
+        market = ['KSQ']
+    elif market == 'ALL':
+        market = ['STK', 'KSQ']
+    else :
+        market = []
+    return market
+
+# ex) [[1, 2, 3], [4, 5, 6]] -> [1, 2, 3, 4, 5, 6]
+def list_cb(l):
+    cb_list = []
+    for i in l:
+       for j in i:
+           cb_list.append(j)
+    return cb_list
+
+def make_dl(l, col):
+    data_list = []
+    # 여기서의 시가는 시작일 기준가, 종가는 종료일 기준가
+    d = {'종목코드': 'ISU_CD', '종목명': 'ISU_ABBRV', '시장구분': 'MKT_NM', '시가': 'BAS_PRC', '종가': 'CLSPRC',
+         '등락률': 'FLUC_RT', '거래량': 'ACC_TRDVOL', '거래대금': 'ACC_TRDVAL', '시가총액': 'MKTCAP', '회전율': 'TURNOVER_RT',
+         '시가총액비중': 'MKTCAP_WT', '상장주식수': 'LIST_SHRS', '환산주가': 'CONV_AMT', '액면가': 'PARVAL',
+         '외국인보유수량': 'HD_QTY', '외국인지분율': 'HD_RTO', '외국인한도수량': 'FORN_ORD_LMT_QTY', '외국인한도소진율': 'ITM_RTO',
+         '시': 'TDD_OPNPRC', '고': 'TDD_HGPRC', '저': 'TDD_LWPRC', '종': 'TDD_CLSPRC', '추정NAV': 'NUM_ITM_VAL1'
+         }
+    for i in l :
+        c = []
+        for j in range(len(col)):
+            if col[j] == '종목명':
+                if len(i[d[col[j]]]) <= 17:
+                    c.append(i[d[col[j]]])
+                else :
+                    c.append(i[d[col[j]]][:15]+'..')
+            elif col[j] == '시장구분':
+                c.append(i[d[col[j]]][:6])
+            else :
+                c.append(del_comma(i[d[col[j]]]))
+        data_list.append(c)
+    return data_list
+
+headers = {'Accept': 'application/json, text/javascript, */*; q=0.01',
+           'Accept-Encoding':'gzip, deflate',
+           'Accept-Language': 'ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7',
+           'Connection': 'keep-alive',
+           'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+           'Host': 'data.krx.co.kr', 'Origin': 'http://data.krx.co.kr',
+           'Referer': 'http://data.krx.co.kr/contents/MDC/MDI/mdiLoader/index.cmd?menuId=MDC0301',
+           'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 '
+                         '(KHTML, like Gecko) Chrome/124.0.0.0',
+           'X-Requested-With': 'XMLHttpRequest'}
+
+BASE_URL = 'http://data.krx.co.kr/comm/bldAttendant/getJsonData.cmd'
+
+print(design())
